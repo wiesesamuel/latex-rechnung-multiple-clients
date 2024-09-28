@@ -1,7 +1,7 @@
 # latex-rechnung
 Bei diesem Repository handelt es sich um eine LaTeX Rechnungsvorlage.
 Die Vorlage wird zur Erstellung von Rechnungen für die in Rechnungsstellung von Dienstleistungen genutzt.
-Sie enthält unter anderem eine Klausel für die Kleinunternehmerregelung.
+Sie enthält unter anderem eine Klausel für die Kleinunternehmerregelung. Darüber hinaus enthält die Rechnung einen Qr Code für Sepa Transaktionen mit banking apps.
 
 ## Anpassung
 * `_main.tex`: Hauptdatei für die Erstellung der PDF mittels LaTeX

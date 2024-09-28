@@ -1,6 +1,5 @@
-% koma_env.tex
 \documentclass[a4paper]{scrlttr2}
-\usepackage[top=2cm, bottom=1cm, left=2cm, right=2cm]{geometry}
+\usepackage[top=2cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
 \usepackage{graphicx}
 \usepackage{lmodern}
 \usepackage[utf8]{inputenc}
@@ -8,21 +7,23 @@
 \usepackage[ngerman]{babel}
 \usepackage{color}
 \usepackage[hidelinks]{hyperref}
-
-\usepackage[german]{invoice}
+\usepackage{ifthen}
+\usepackage[german]{invoice} % invoice-Paket für die Rechnungslinien
+\usepackage[qrscheme=epc]{qrbill} % SEPA-QR-Code Paket
+\usepackage{fp} % Für Berechnungen
 
 
 \renewcommand{\familydefault}{\sfdefault}
 
-% include meta data
+% Include meta data
 \include{_data}
 
 \setkomavar{fromname}{\senderName}
+\setkomavar{frommobilephone}{\senderMobilephone}
 \setkomavar{fromaddress}{\senderStreet \\ \senderZIP \ \senderCity}
 \setkomavar{place}{\senderCity}
 \setkomavar{date}{\invoiceDate}
 \setkomavar{fromphone}{\senderTelephone}
-\setkomavar{frommobilephone}{\senderMobilephone}
 \setkomavar{fromemail}{\href{mailto:\senderEmail}{\nolinkurl{\senderEmail}}}
 \setkomavar{subject}{Rechnung}
 \setkomavar{location}{
@@ -42,7 +43,6 @@
 		 & \senderStreet\\
 		 & \senderZIP  \ \senderCity \\
 		 \\
-		 %\Telefon \ Telefon:  \` \senderTelephone \\
 		 Mobil  & \usekomavar{frommobilephone} \\
 		 E-Mail  & \usekomavar{fromemail} \\
 		 Webseite & {\normalfont\ttfamily  \senderWeb } \\
@@ -56,17 +56,32 @@
    }%
 }
 
+\newcommand{\totalAmount}{}
+
+\newcommand{\CalcFee}[3]{%
+    %\textbf{Leistung: #1}, Betrag: #2 Euro, Anzahl: #3\\
+    \FPmul{\rawAmount}{#2}{#3} % Berechne den Gesamtbetrag
+    \FPround{\totalAmount}{\rawAmount}{2} % Runde auf zwei Dezimalstellen
+}
 
 \begin{document}
-	\begin{letter}{\customerCompany \\ \customerName \\ 
-	\customerStreet \\ \customerZIP \ \customerCity}
-	
-			\includegraphics[width=0.15\textwidth]{logo.png}			
-			\opening{\invoiceSalutation}
-			\invoiceText
+	\begin{letter}{
+	\ifthenelse{\equal{\customerCompany}{}}{}{\customerCompany \\}
+	\ifthenelse{\equal{\customerName}{}}{}{\customerName \\} 
+	\customerStreet \\ 
+	\customerZIP~\customerCity}
+
+		\includegraphics[width=0.15\textwidth]{logo.png}			
+		\opening{\invoiceSalutation}
+		\invoiceText
+
+		% Berechnung der Leistung und des Gesamtbetrags
+		\CalcFee{Software Beratung}{\hourprice}{\hournumber}
+		
 		    \begin{invoice}{Euro}{0}
 			    \input{_invoice}
 		    \end{invoice}
+		
 		\ps Im ausgewiesenen Betrag ist gemäß § 19 UStG keine Umsatzsteuer 
 		enthalten.
 		
@@ -74,8 +89,22 @@
 		\closing{\invoiceClosing}
 		\invoiceEnclosures
 
+		\vspace*{0.5cm} % Abstand vor dem QR-Code
+		\noindent % Keine Einrückung
+		\hfill % Rechtsbündig machen
+		\raisebox{-3cm}[0pt][0pt]{%
+		    \QRbill*[
+		        Account=\accountIBAN,
+		        Name=\senderName,
+		        Amount=EUR\totalAmount,
+		        Message={Rechnung \invoiceReference}
+		    ]
+		}
 
-
+		\vspace*{3.2cm} % Kleiner Abstand zwischen QR-Code und Text
+		\noindent % Keine Einrückung
+		\hfill % Rechtsbündig machen
+		\textbf{Scan SEPA QR with banking app}
+		\enlargethispage{30cm} % Erweitere die Seite um 3cm nach unten
 	\end{letter}
 \end{document}
-

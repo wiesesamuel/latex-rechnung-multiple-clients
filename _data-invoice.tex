@@ -1,10 +1,30 @@
+\RequirePackage{pgfcalendar}
+\RequirePackage{pgfmath}
+
+% ################## invoice DATA ##################
+\newcommand{\rawInvoiceDate}{2025-07-27}
+% ################## invoice DATA ##################
+
+% ========= 1) Zählervariablen anlegen ====================
+\newcount\invJul
+\newcount\payJul
+% ========= 2) Ausgangsdatum (ISO) → Julian ==============
+\pgfcalendardatetojulian{\rawInvoiceDate}{\invJul}
+% ========= 3) +14 Tage ohne pgfmath ======================
+\payJul = \invJul
+\advance\payJul by 14
+% ========= 4) Formate erzeugen ===========================
+\pgfcalendarjuliantodate{\invJul}{\invYear}{\invMonth}{\invDay}
+\edef\invoiceDate{\invDay.\invMonth.\invYear}
+\pgfcalendarjuliantodate{\payJul}{\payYear}{\payMonth}{\payDay}
+\edef\payDate{\payDay.\payMonth.\payYear}
+
+% ################## invoice DATA ##################
+\edef\invoiceReference{RE-360-\invYear\invMonth\invDay-001}
+% ################## invoice DATA ##################
 
 
 % ################## invoice DATA ##################
-
-\newcommand{\invoiceDate}{09.05.2025} % Datum der rechnungsstellung
-\newcommand{\payDate}{23.05.2025} % Datum der Zahlungsfrist
-\newcommand{\invoiceReference}{RE-360-20250509-001} % Rechnungsnummer (z.B. 20150122-4)
 \newcommand{\invoiceSalutation}{Sehr geehrte Damen und Herren,} % die Anrede
 \newcommand{\invoiceText}{für die von mir erbrachte Leistung erhalten Sie
 hiermit die Rechnung. Bitte zahlen Sie den unten aufgeführten Gesamtbetrag
@@ -13,6 +33,8 @@ zum \payDate \ auf das angegebene Konto ein.} % Rechnungstext
 \newcommand{\invoiceEnclosures}{} % \encl{} einfügen
 \newcommand{\invoiceClosing}{Mit freundlichen Grüßen}
 % ################## invoice DATA ##################
+
+
 
 %################### Invoice DATA ###################
 \newcommand{\hourprice}{14.00}

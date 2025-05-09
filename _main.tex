@@ -64,14 +64,24 @@
     \FPround{\totalAmount}{\rawAmount}{2} % Runde auf zwei Dezimalstellen
 }
 
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}  % use millimetres for placement
+\setlength{\TPVertModule}{1mm}
+
 \begin{document}
 	\begin{letter}{
+	\begin{textblock*}{40mm}(20mm,15mm)   % 40 mm wide, position (x,y)
+		\includegraphics[width=40mm]{logov2.png}
+	\end{textblock*}
+
 	\ifthenelse{\equal{\customerCompany}{}}{}{\customerCompany \\}
 	\ifthenelse{\equal{\customerName}{}}{}{\customerName \\} 
 	\customerStreet \\ 
 	\customerZIP~\customerCity}
 
-		\includegraphics[width=0.15\textwidth]{logo.png}			
+% 		\PlaceLogo
+%  		\includegraphics[width=0.15\textwidth]{logo_cropped.png}
+% 		\includegraphics[width=0.15\textwidth]{logov0.png}
 		\opening{\invoiceSalutation}
 		\invoiceText
 
